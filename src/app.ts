@@ -1,19 +1,22 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config(); 
+
+import express from "express";
 import identifyRoute from "./routes/identify.route";
 import { pool } from "./config/db";
 
+// Now DB connect AFTER dotenv loads
 pool.connect()
   .then(() => console.log("Database connected"))
   .catch((err) => console.error("DB connection error:", err));
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
 
 app.use("/", identifyRoute);
 
-app.listen(3000, () => {
-   console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
