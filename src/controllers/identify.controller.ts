@@ -40,9 +40,7 @@ export const identifyController = async (
 
     // Step 1: Extract unique primary IDs
     const primaryIds = new Set<number>(
-      contacts.map(c =>
-        c.linkedid ? c.linkedid : c.id
-      )
+      contacts.map((c: any) => c.linkedid ? c.linkedid : c.id)
     );
 
     let primaryId: number;
