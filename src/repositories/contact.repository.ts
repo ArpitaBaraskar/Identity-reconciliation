@@ -16,3 +16,19 @@ export const findContactsByEmailOrPhone = async (
 
   return result.rows;
 };
+
+export const createPrimaryContact = async (
+  email?: string,
+  phoneNumber?: string
+) => {
+  const result = await pool.query(
+    `
+    INSERT INTO Contact (email, phoneNumber, linkPrecedence)
+    VALUES ($1, $2, 'primary')
+    RETURNING *
+    `,
+    [email || null, phoneNumber || null]
+  );
+
+  return result.rows[0];
+};
