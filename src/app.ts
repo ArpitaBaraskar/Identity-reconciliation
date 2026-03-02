@@ -1,6 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
 import identifyRoute from "./routes/identify.route";
+import { pool } from "./config/db";
+
+pool.connect()
+  .then(() => console.log("Database connected"))
+  .catch((err) => console.error("DB connection error:", err));
 
 dotenv.config();
 

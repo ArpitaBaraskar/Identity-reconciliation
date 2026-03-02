@@ -1,6 +1,9 @@
-// db.ts
 import { Pool } from "pg";
 
 export const pool = new Pool({
-   connectionString: process.env.DATABASE_URL
+  user: "postgres",
+  host: "localhost",
+  database: "bitespeed",
+  password: process.env.DB_PASSWORD || "BaraskarA@14",
+  port: 5432,
 });
