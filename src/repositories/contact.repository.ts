@@ -32,3 +32,17 @@ export const createPrimaryContact = async (
 
   return result.rows[0];
 };
+
+export const getAllLinkedContacts = async (primaryId: number) => {
+  const result = await pool.query(
+    `
+    SELECT * FROM Contact
+    WHERE 
+      id = $1 
+      OR linkedId = $1
+    `,
+    [primaryId]
+  );
+
+  return result.rows;
+};

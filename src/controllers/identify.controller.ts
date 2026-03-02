@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import {
   findContactsByEmailOrPhone,
-  createPrimaryContact
+  createPrimaryContact,
+  getAllLinkedContacts
 } from "../repositories/contact.repository";
 
 export const identifyController = async (
@@ -18,7 +19,7 @@ export const identifyController = async (
 
   const contacts = await findContactsByEmailOrPhone(email, phoneNumber);
 
-  // If no match → create new primary
+  //  No match → create primary
   if (contacts.length === 0) {
     const newContact = await createPrimaryContact(email, phoneNumber);
 
@@ -32,9 +33,29 @@ export const identifyController = async (
     });
   }
 
-  // For now just return matches (next step we'll merge)
+  //  Match exists → find primary
+  const primary =
+    contacts.find(c => c.linkprecedence === "primary") ||
+    contacts[0];
+
+  const primaryId =
+    primary.linkedid ? primary.linkedid : primary.id;
+
+  const allContacts = await getAllLinkedContacts(primaryId);
+
+  const emails = [...new Set(allContacts.map(c => c.email).filter(Boolean))];
+  const phoneNumbers = [...new Set(allContacts.map(c => c.phonenumber).filter(Boolean))];
+
+  const secondaryContactIds = allContacts
+    .filter(c => c.linkprecedence === "secondary")
+    .map(c => c.id);
+
   return res.status(200).json({
-    message: "Match found, merging logic coming next",
-    contacts
+    contact: {
+      primaryContactId: primaryId,
+      emails,
+      phoneNumbers,
+      secondaryContactIds
+    }
   });
 };
